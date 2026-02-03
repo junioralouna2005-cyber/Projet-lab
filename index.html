@@ -1,71 +1,731 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Enregistrement des Patients</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MAISON — Boutique</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #f5f0eb;
+    --dark: #1a1714;
+    --accent: #c8956c;
+    --accent-light: #e8d5c0;
+    --muted: #8a8279;
+    --white: #fff;
+    --shadow: 0 8px 40px rgba(26,23,20,.12);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: sticky;
+    top: 0; z-index: 100;
+    background: rgba(245,240,235,.92);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(26,23,20,.07);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--dark);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
+
+  .cart-btn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dark);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color .3s;
+  }
+  .cart-btn:hover { color: var(--accent); }
+  .cart-btn svg { width:22px; height:22px; }
+  .cart-badge {
+    position: absolute;
+    top: 2px; right: 2px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .3s;
+  }
+  .cart-badge.pop { animation: pop .3s ease; }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.5)} 100%{transform:scale(1)} }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    height: 380px;
+    background: linear-gradient(135deg, #2c2420 0%, #3d3229 50%, #1a1714 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content:'';
+    position: absolute; inset:0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8956c' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 1;
+  }
+  .hero-content {
+    position: relative; z-index:1;
+    text-align: center;
+    color: #fff;
+  }
+  .hero-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    animation: fadeUp .8s ease both;
+  }
+  .hero-content p {
+    font-size: 15px;
+    color: var(--accent-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 300;
+    animation: fadeUp .8s .15s ease both;
+  }
+  .hero-line {
+    width: 50px; height: 2px;
+    background: var(--accent);
+    margin: 20px auto 0;
+    animation: fadeUp .8s .3s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── FILTERS ─── */
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 36px 20px 10px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: transparent;
+    border: 1.5px solid rgba(26,23,20,.2);
+    color: var(--dark);
+    padding: 9px 22px;
+    border-radius: 30px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .3s;
+  }
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--dark);
+    color: #fff;
+    border-color: var(--dark);
+  }
+
+  /* ─── SECTION TITLE ─── */
+  .section-title {
+    text-align: center;
+    padding: 20px 0 28px;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 2px;
+  }
+  .section-title .line {
+    width: 40px; height: 2px;
+    background: var(--accent);
+    margin: 10px auto 0;
+  }
+
+  /* ─── PRODUCT GRID ─── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+    padding: 0 40px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .product-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform .35s ease, box-shadow .35s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 50px rgba(26,23,20,.18);
+  }
+
+  .card-img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #ebe5de;
+    aspect-ratio: 4/3.5;
+  }
+  .card-img-wrap img {
+    width:100%; height:100%;
+    object-fit: cover;
+    transition: transform .5s ease;
+  }
+  .product-card:hover .card-img-wrap img {
+    transform: scale(1.06);
+  }
+  .badge {
+    position: absolute;
+    top: 14px; left: 14px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+  .badge.new { background: var(--dark); }
+
+  .card-body {
+    padding: 20px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    flex:1;
+  }
+  .card-category {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--dark);
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    flex:1;
+    margin-bottom: 14px;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-price {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--dark);
+  }
+  .card-price .old {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: line-through;
+    margin-left: 8px;
+    font-weight: 400;
+  }
+  .add-btn {
+    background: var(--dark);
+    color: #fff;
+    border: none;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .3s, transform .2s;
+  }
+  .add-btn:hover {
+    background: var(--accent);
+    transform: scale(1.1);
+  }
+  .add-btn svg { width:20px; height:20px; }
+
+  /* ─── CART DRAWER ─── */
+  .overlay {
+    position: fixed; inset:0;
+    background: rgba(0,0,0,.45);
+    z-index: 199;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s;
+  }
+  .overlay.show { opacity:1; pointer-events:auto; }
+
+  .cart-drawer {
+    position: fixed;
+    top:0; right:0;
+    width: 400px;
+    max-width: 92vw;
+    height: 100%;
+    background: #fff;
+    z-index: 200;
+    transform: translateX(105%);
+    transition: transform .4s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -12px 0 50px rgba(0,0,0,.15);
+  }
+  .cart-drawer.show { transform: translateX(0); }
+
+  .drawer-header {
+    padding: 28px 28px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(26,23,20,.08);
+  }
+  .drawer-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: var(--muted);
+    transition: color .3s;
+    line-height:1;
+  }
+  .close-btn:hover { color: var(--dark); }
+
+  .cart-items {
+    flex:1;
+    overflow-y: auto;
+    padding: 18px 28px;
+  }
+  .cart-items::-webkit-scrollbar { width:4px; }
+  .cart-items::-webkit-scrollbar-thumb { background: var(--accent-light); border-radius:2px; }
+
+  .cart-empty {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--muted);
+  }
+  .cart-empty svg { width:60px; height:60px; opacity:.35; margin-bottom:16px; }
+  .cart-empty p { font-size:15px; }
+
+  .cart-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(26,23,20,.06);
+    animation: slideIn .3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity:0; transform:translateX(20px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+  .cart-item:last-child { border-bottom:none; }
+  .cart-item img {
+    width: 72px; height: 72px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #ebe5de;
+  }
+  .cart-item-info { flex:1; min-width:0; }
+  .cart-item-info h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cart-item-info .ci-price {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .qty-btn {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(26,23,20,.18);
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark);
+    transition: all .2s;
+  }
+  .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .qty-val { font-size:14px; font-weight:500; min-width:18px; text-align:center; }
+  .remove-btn {
+    background:none; border:none;
+    color: var(--muted);
+    cursor:pointer;
+    font-size:18px;
+    margin-left: auto;
+    transition: color .2s;
+    line-height:1;
+  }
+  .remove-btn:hover { color:#c0392b; }
+
+  .cart-footer {
+    padding: 20px 28px 30px;
+    border-top: 1px solid rgba(26,23,20,.08);
+  }
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .cart-total span { font-size:14px; color:var(--muted); }
+  .cart-total strong { font-size:22px; font-weight:600; }
+  .cart-shipping {
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:18px;
+  }
+  .checkout-btn {
+    width:100%;
+    padding: 15px;
+    background: var(--dark);
+    color: #fff;
+    border:none;
+    border-radius: 12px;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:500;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition: background .3s, transform .15s;
+  }
+  .checkout-btn:hover { background: var(--accent); transform:scale(.98); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,.5);
+    text-align: center;
+    padding: 36px 20px;
+    font-size: 13px;
+    letter-spacing:1px;
+  }
+  footer a { color: var(--accent); text-decoration:none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:600px){
+    header { padding:14px 20px; }
+    .logo { font-size:20px; letter-spacing:4px; }
+    .hero { height:260px; }
+    .hero-content h1 { font-size:34px; }
+    .product-grid { padding:0 16px 50px; gap:18px; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+    .card-name { font-size:15px; }
+  }
+</style>
 </head>
+<body>
 
-<body class="bg-light">
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo">MAISON<span>.</span></a>
+  <button class="cart-btn" onclick="toggleCart()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+    </svg>
+    Panier
+    <span class="cart-badge" id="cartBadge">0</span>
+  </button>
+</header>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="#">Hôpital Central</a>
-        <div>
-            <a href="patients.html" class="btn btn-light">Liste des patients</a>
-        </div>
-    </div>
-</nav>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Bienvenue chez Maison</h1>
+    <p>Élégance au quotidien</p>
+    <div class="hero-line"></div>
+  </div>
+</section>
 
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4>Formulaire d’enregistrement</h4>
-        </div>
-
-        <div class="card-body">
-            <form>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label class="form-label">Nom</label>
-                        <input type="text" class="form-control" required>
-                    </div>
-                    <div class="col">
-                        <label class="form-label">Prénom</label>
-                        <input type="text" class="form-control" required>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Date de naissance</label>
-                    <input type="date" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Sexe</label>
-                    <select class="form-select">
-                        <option>Homme</option>
-                        <option>Femme</option>
-                        <option>Autre</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Adresse</label>
-                    <input type="text" class="form-control">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Téléphone</label>
-                    <input type="tel" class="form-control">
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
-            </form>
-        </div>
-    </div>
+<!-- FILTRES -->
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-filter="all">Tout</button>
+  <button class="filter-btn" data-filter="deco">Décoration</button>
+  <button class="filter-btn" data-filter="textile">Textile</button>
+  <button class="filter-btn" data-filter="cuisine">Cuisine</button>
+  <button class="filter-btn" data-filter="lumiere">Lumière</button>
 </div>
 
+<!-- TITRE -->
+<div class="section-title">
+  <h2>Notre Collection</h2>
+  <div class="line"></div>
+</div>
+
+<!-- GRILLE PRODUITS -->
+<div class="product-grid" id="productGrid"></div>
+
+<!-- OVERLAY + CART DRAWER -->
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <h2>Votre Panier</h2>
+    <button class="close-btn" onclick="toggleCart()">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <!-- filled by JS -->
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cartTotal">0,00 €</strong>
+    </div>
+    <p class="cart-shipping">Livraison gratuite au-delà de 80 €</p>
+    <button class="checkout-btn" onclick="alert('Merci pour votre commande ! 🎉')">Passer à la caisse</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  &copy; 2025 Maison — Fait avec ❤️ | <a href="#">CGV</a> &nbsp;|&nbsp; <a href="#">Contact</a> &nbsp;|&nbsp; <a href="#">Livraison</a>
+</footer>
+
+<script>
+// ─── DONNÉES PRODUITS ────────────────────────────
+const products = [
+  {
+    id:1, name:"Vase en céladon",
+    category:"deco", price:48, oldPrice:null,
+    badge:"New", badgeClass:"new",
+    desc:"Vase artisanal en céramique émaillée, inspiré de la poterie chinoise.",
+    img:"https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=400&h=350&fit=crop"
+  },
+  {
+    id:2, name:"Couverture en cachemire",
+    category:"textile", price:124, oldPrice:168,
+    badge:"Solde", badgeClass:"",
+    desc:"Douceur extrême en cachemire pur, teint naturel.",
+    img:"https://images.unsplash.com/photo-1616627212963-89c5ffbe38d3?w=400&h=350&fit=crop"
+  },
+  {
+    id:3, name:"Lampe Terrazzo",
+    category:"lumiere", price:86, oldPrice:null,
+    badge:null, badgeClass:"",
+    desc:"Lampe de table au socle en terrazzo, abat-jour en lin.",
+    img:"https://images.unsplash.com/photo-1513490590578-7d38040c054d?w=400&h=350&fit=crop"
+  },
+  {
+    id:4, name:"Ensemble à thé",
+    category:"cuisine", price:62, oldPrice:null,
+    badge:"New", badgeClass:"new",
+    desc:"Théière + 4 tasses en porcelaine émaillée en bleu profond.",
+    img:"https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=350&fit=crop"
+  },
+  {
+    id:5, name:"Miroir rond boisé",
+    category:"deco", price:145, oldPrice:190,
+    badge:"Solde", badgeClass:"",
+    desc:"Miroir rond en chêne massif, finition naturelle.",
+    img:"https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=400&h=350&fit=crop"
+  },
+  {
+    id:6, name:"Rideau en lin",
+    category:"textile", price:94, oldPrice:null,
+    badge:null, badgeClass:"",
+    desc:"Rideau en lin lavé, teint blanc cassé, 240 cm de hauteur.",
+    img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=350&fit=crop"
+  },
+  {
+    id:7, name:"Planches à couper",
+    category:"cuisine", price:38, oldPrice:null,
+    badge:null, badgeClass:"",
+    desc:"Lot de 2 planches en noyer et érable, épaisseur 3 cm.",
+    img:"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=350&fit=crop"
+  },
+  {
+    id:8, name:"Suspension murale",
+    category:"lumiere", price:72, oldPrice:110,
+    badge:"Solde", badgeClass:"",
+    desc:"Suspension en cuivre poli, ampoule filament incluse.",
+    img:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=350&fit=crop"
+  }
+];
+
+let cart = [];
+
+// ─── RENDU DES PRODUITS ─────────────────────────
+function renderProducts(filter = "all") {
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML = "";
+  const list = filter === "all" ? products : products.filter(p => p.category === filter);
+  list.forEach((p, i) => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.style.animation = `fadeUp .45s ${i * .07}s ease both`;
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        <img src="${p.img}" alt="${p.name}" loading="lazy"/>
+        ${p.badge ? `<span class="badge ${p.badgeClass}">${p.badge}</span>` : ""}
+      </div>
+      <div class="card-body">
+        <span class="card-category">${p.category}</span>
+        <h3 class="card-name">${p.name}</h3>
+        <p class="card-desc">${p.desc}</p>
+        <div class="card-footer">
+          <div class="card-price">
+            ${p.price},00 €
+            ${p.oldPrice ? `<span class="old">${p.oldPrice},00 €</span>` : ""}
+          </div>
+          <button class="add-btn" onclick="addToCart(${p.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ─── FILTRES ─────────────────────────────────────
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderProducts(btn.dataset.filter);
+  });
+});
+
+// ─── PANIER ──────────────────────────────────────
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  const existing = cart.find(i => i.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ ...product, qty: 1 });
+  updateCart();
+  // Badge pop
+  const badge = document.getElementById("cartBadge");
+  badge.classList.remove("pop");
+  void badge.offsetWidth;
+  badge.classList.add("pop");
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCart();
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else updateCart();
+}
+
+function updateCart() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById("cartBadge").textContent = count;
+  document.getElementById("cartTotal").textContent = total.toFixed(2).replace(".", ",") + " €";
+
+  const container = document.getElementById("cartItems");
+  const footer = document.getElementById("cartFooter");
+
+  if (cart.length === 0) {
+    footer.style.display = "none";
+    container.innerHTML = `
+      <div class="cart-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <p>Votre panier est vide</p>
+      </div>`;
+    return;
+  }
+
+  footer.style.display = "block";
+  container.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <img src="${item.img}" alt="${item.name}"/>
+      <div class="cart-item-info">
+        <h4>${item.name}</h4>
+        <span class="ci-price">${item.price},00 €</span>
+        <div class="cart-item-controls">
+          <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+          <span class="qty-val">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+        </div>
+      </div>
+      <button class="remove-btn" onclick="removeFromCart(${item.id})">&times;</button>
+    </div>
+  `).join("");
+}
+
+// ─── TIROIR PANIER ───────────────────────────────
+function toggleCart() {
+  document.getElementById("cartDrawer").classList.toggle("show");
+  document.getElementById("overlay").classList.toggle("show");
+}
+
+// ─── INIT ─────────────────────────────────────────
+renderProducts();
+updateCart();
+</script>
 </body>
 </html>
